@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace Pets_identifier
 {
-	public partial class MainPage : TabbedPage
+	[XamlCompilation(XamlCompilationOptions.Compile)]
+	public partial class AzureTable : ContentPage
 	{
-		public MainPage()
+		public AzureTable()
 		{
 			InitializeComponent();
 		}
