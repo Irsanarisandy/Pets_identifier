@@ -1,0 +1,8 @@
+﻿<Application
+    x:Class="Pets_identifier.UWP.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Pets_identifier.UWP"
+    RequestedTheme="Light">
+
+</Application>
