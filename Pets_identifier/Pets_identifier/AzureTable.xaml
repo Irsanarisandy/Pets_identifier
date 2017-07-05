@@ -1,6 +1,23 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Pets_identifier.AzureTable">
-	<ContentPage.Content>
-        <Label Text="Pets Navigation Page Tab" VerticalOptions="Center" HorizontalOptions="Center" />
-	</ContentPage.Content>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Pets_identifier.AzureTable" Title="Pet Shop Links">
+    <ContentPage.Padding>
+        <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0" />
+    </ContentPage.Padding>
+    <ContentPage.Content>
+        <StackLayout Orientation="Vertical">
+            <Button Text="See Pet Information" TextColor="White" BackgroundColor="DarkGreen" Clicked="Handle_ClickedAsync" />
+            <ListView x:Name="PetList" HasUnevenRows="True">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+							<StackLayout Orientation="Vertical">
+								<Label Text="{Binding Category, StringFormat='Item Category: {0:N}'}" HorizontalOptions="FillAndExpand" Margin="5, 15, 5, 0" />
+								<Label Text="{Binding Link, StringFormat='Item Link:&#x0a;{0:N}'}" HorizontalOptions="FillAndExpand" Margin="5, 0, 5, 15" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
 </ContentPage>

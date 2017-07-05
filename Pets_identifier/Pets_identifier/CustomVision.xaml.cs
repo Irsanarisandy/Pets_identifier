@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Pets_identifier.Model;
 using Plugin.Media;
 using Plugin.Media.Abstractions;
@@ -15,6 +14,9 @@ namespace Pets_identifier
 {
 	public partial class CustomVision : ContentPage
 	{
+		private string result1;
+		private string result2;
+
 		public CustomVision()
 		{
 			InitializeComponent();
@@ -45,7 +47,7 @@ namespace Pets_identifier
 				return file.GetStream();
 			});
 
-			 await MakePredictionRequest(file);
+			await MakePredictionRequest(file);
         }
 
         static byte[] GetImageAsByteArray(MediaFile file)
@@ -61,7 +63,7 @@ namespace Pets_identifier
 
 			client.DefaultRequestHeaders.Add("Prediction-Key", "69ac7f16e50a4c8fa1f8fa2f7e882d1e");
 
-			string url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/821dc763-ec21-420a-986e-30ccc435bda6/image?iterationId=6092ed69-5fb9-458b-b9e6-5c059404a273";
+			string url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/821dc763-ec21-420a-986e-30ccc435bda6/image?iterationId=8ce43913-33eb-46dd-9881-4c76168cc6bd";
 
 			HttpResponseMessage response;
 
@@ -69,10 +71,8 @@ namespace Pets_identifier
 
 			using (var content = new ByteArrayContent(byteData))
 			{
-
 				content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 				response = await client.PostAsync(url, content);
-
 
 				if (response.IsSuccessStatusCode)
 				{
@@ -82,11 +82,39 @@ namespace Pets_identifier
 
 					double max = responseModel.Predictions.Max(m => m.Probability);
 
-					TagLabel.Text = (max >= 0.5) ? "Pet" : "Not pet";
-
+					if (max >= 0.5)
+					{
+						var results = responseModel.Predictions.OrderByDescending(p => p.Probability);
+						result1 = results.Take(1).Single().Tag;
+						result2 = results.Skip(1).Take(1).Single().Tag;
+						string[] tempArray = { "Hamster", "Rabbit" };
+						if ((String.Equals(result1, "Small Pet") && Array.IndexOf(tempArray, result2) > -1) || (String.Equals(result2, "Small Pet") && Array.IndexOf(tempArray, result1) > -1))
+						{
+							AzureManager.AzureManagerInstance.SetPet("Small Pet");
+							PetShopLink.Text = "http://www.animates.co.nz/small-pet";
+						}
+						else
+						{
+							string temp = (String.Equals(result1, "Small Pet")) ? result2 : result1;
+							AzureManager.AzureManagerInstance.SetPet(temp);
+							PetShopLink.Text = "http://www.animates.co.nz/" + temp.ToLower();
+						}
+						TagLabel.Text = (String.Equals(result1, "Small Pet")) ? result2 : result1;
+						TagLabel.Text += ": ";
+						PetShopLink.GestureRecognizers.Add(new TapGestureRecognizer
+						{
+							Command = new Command(() => {
+								Device.OpenUri(new Uri(PetShopLink.Text));
+							})
+						});
+					}
+					else
+					{
+						TagLabel.Text = "Not Pet";
+						PetShopLink.Text = "";
+					}
 				}
-
-				//Get rid of file once we have finished using it
+				
 				file.Dispose();
 			}
 		}
