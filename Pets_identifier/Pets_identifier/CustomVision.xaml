@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Pets_identifier.CustomVision" Title= "Pet Identifier">
 	<ContentPage.Content>
-		<StackLayout Margin="20, 15, 20, 0" Orientation="Vertical">
-			<StackLayout Orientation="Horizontal">
+		<StackLayout Orientation="Vertical">
+			<StackLayout Orientation="Horizontal" Margin="15, 15, 15, 0">
 				<Button x:Name="cameraButton" Text="Take New Photo" Clicked="LoadCamera" />
-				<Button x:Name="galleryButton" Text="Get Existing Photo" />
+				<Button x:Name="galleryButton" Text="Get Existing Photo" Clicked="LoadGallery" />
 			</StackLayout>
-			<StackLayout Orientation="Horizontal" Margin="0, 10" >
+			<StackLayout Orientation="Horizontal" Margin="20, 5, 20, 7">
 				<Label x:Name="TagLabel" />
 				<Label x:Name="PetShopLink" />
 			</StackLayout>
-			<Image x:Name="image" Aspect="AspectFit" />
+			<Image x:Name="image" Aspect="AspectFit" Margin="20, 0" />
 		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>

@@ -33,7 +33,8 @@ namespace Pets_identifier
 			{
 				PhotoSize = PhotoSize.Medium,
 				Directory = "Sample",
-				Name = $"{DateTime.UtcNow}.png"
+				Name = $"{DateTime.UtcNow}.png",
+				AllowCropping = true
 			});
 
 			if (file == null)
@@ -46,6 +47,26 @@ namespace Pets_identifier
 
 			await MakePredictionRequest(file);
         }
+
+		private async void LoadGallery(object sender, EventArgs e)
+		{
+			await CrossMedia.Current.Initialize();
+
+			MediaFile file = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions
+			{
+				PhotoSize = PhotoSize.Medium
+			});
+
+			if (file == null)
+				return;
+
+			image.Source = ImageSource.FromStream(() =>
+			{
+				return file.GetStream();
+			});
+
+			await MakePredictionRequest(file);
+		}
 
         static byte[] GetImageAsByteArray(MediaFile file)
         {
