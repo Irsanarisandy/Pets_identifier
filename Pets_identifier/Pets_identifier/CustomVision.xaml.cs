@@ -14,9 +14,6 @@ namespace Pets_identifier
 {
 	public partial class CustomVision : ContentPage
 	{
-		private string result1;
-		private string result2;
-
 		public CustomVision()
 		{
 			InitializeComponent();
@@ -85,8 +82,8 @@ namespace Pets_identifier
 					if (max >= 0.5)
 					{
 						var results = responseModel.Predictions.OrderByDescending(p => p.Probability);
-						result1 = results.Take(1).Single().Tag;
-						result2 = results.Skip(1).Take(1).Single().Tag;
+						var result1 = results.Take(1).Single().Tag;
+						var result2 = results.Skip(1).Take(1).Single().Tag;
 						string[] tempArray = { "Hamster", "Rabbit" };
 						if ((String.Equals(result1, "Small Pet") && Array.IndexOf(tempArray, result2) > -1) || (String.Equals(result2, "Small Pet") && Array.IndexOf(tempArray, result1) > -1))
 						{
