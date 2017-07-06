@@ -5,8 +5,8 @@
     </ContentPage.Padding>
     <ContentPage.Content>
         <StackLayout Orientation="Vertical">
-            <Button Text="See Pet Item Category and Link" TextColor="White" BackgroundColor="DarkGreen" Clicked="Handle_ClickedAsync" Margin="15, 15, 15, 0" />
-            <ListView x:Name="PetList" HasUnevenRows="True">
+            <Button Text="See Pet Item Category and Link" TextColor="White" BackgroundColor="DarkGreen" Clicked="GetItemCatAndLink" Margin="15, 15, 15, 0" />
+            <ListView x:Name="PetList" HasUnevenRows="True" ItemSelected="PetItemSelected">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

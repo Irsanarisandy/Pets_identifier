@@ -1,9 +1,6 @@
-﻿using Pets_identifier;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Pets_identifier
@@ -15,7 +12,7 @@ namespace Pets_identifier
 			InitializeComponent();
 		}
 
-		async void Handle_ClickedAsync(object sender, System.EventArgs e)
+		private async void GetItemCatAndLink(object sender, EventArgs e)
 		{
 			string pet = AzureManager.AzureManagerInstance.GetPet();
 			if (pet != null)
@@ -23,6 +20,16 @@ namespace Pets_identifier
 				List<PetIdentifier> petInfo = await AzureManager.AzureManagerInstance.GetPetInformation();
 				PetList.ItemsSource = petInfo.Where(p => String.Equals(p.Pet, pet));
 			}
+		}
+
+		private void PetItemSelected(object sender, SelectedItemChangedEventArgs e)
+		{
+			if (e.SelectedItem == null)
+			{
+				return;
+			}
+			((ListView)sender).SelectedItem = null;
+			Device.OpenUri(new Uri(((PetIdentifier)e.SelectedItem).Link.ToString()));
 		}
 	}
 }

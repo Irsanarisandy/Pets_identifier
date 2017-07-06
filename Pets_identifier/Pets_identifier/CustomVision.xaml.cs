@@ -68,14 +68,14 @@ namespace Pets_identifier
 			await MakePredictionRequest(file);
 		}
 
-        static byte[] GetImageAsByteArray(MediaFile file)
+        private static byte[] GetImageAsByteArray(MediaFile file)
         {
             var stream = file.GetStream();
             BinaryReader binaryReader = new BinaryReader(stream);
             return binaryReader.ReadBytes((int)stream.Length);
         }
 
-		async Task MakePredictionRequest(MediaFile file)
+		private async Task MakePredictionRequest(MediaFile file)
 		{
 			var client = new HttpClient();
 
