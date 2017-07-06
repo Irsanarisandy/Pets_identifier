@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Xamarin.Forms;
 
@@ -14,11 +13,11 @@ namespace Pets_identifier
 
 		private async void GetItemCatAndLink(object sender, EventArgs e)
 		{
-			string pet = AzureManager.AzureManagerInstance.GetPet();
+			var pet = AzureManager.AzureManagerInstance.GetPet();
 			if (pet != null)
 			{
-				List<PetIdentifier> petInfo = await AzureManager.AzureManagerInstance.GetPetInformation();
-				PetList.ItemsSource = petInfo.Where(p => String.Equals(p.Pet, pet));
+				var petInfo = await AzureManager.AzureManagerInstance.GetPetInformation();
+				PetList.ItemsSource = petInfo.Where(p => String.Equals(p.Pet, pet)).OrderBy(p => p.Category);
 			}
 		}
 

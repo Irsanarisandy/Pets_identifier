@@ -29,7 +29,7 @@ namespace Pets_identifier
 				return;
 			}
 
-			MediaFile file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
+			var file = await CrossMedia.Current.TakePhotoAsync(new StoreCameraMediaOptions
 			{
 				PhotoSize = PhotoSize.Medium,
 				Directory = "Sample",
@@ -52,7 +52,7 @@ namespace Pets_identifier
 		{
 			await CrossMedia.Current.Initialize();
 
-			MediaFile file = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions
+			var file = await CrossMedia.Current.PickPhotoAsync(new PickMediaOptions
 			{
 				PhotoSize = PhotoSize.Medium
 			});
@@ -71,7 +71,7 @@ namespace Pets_identifier
         private static byte[] GetImageAsByteArray(MediaFile file)
         {
             var stream = file.GetStream();
-            BinaryReader binaryReader = new BinaryReader(stream);
+            var binaryReader = new BinaryReader(stream);
             return binaryReader.ReadBytes((int)stream.Length);
         }
 
@@ -81,11 +81,11 @@ namespace Pets_identifier
 
 			client.DefaultRequestHeaders.Add("Prediction-Key", "69ac7f16e50a4c8fa1f8fa2f7e882d1e");
 
-			string url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/821dc763-ec21-420a-986e-30ccc435bda6/image?iterationId=8ce43913-33eb-46dd-9881-4c76168cc6bd";
+			var url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v1.0/Prediction/821dc763-ec21-420a-986e-30ccc435bda6/image?iterationId=8ce43913-33eb-46dd-9881-4c76168cc6bd";
 
 			HttpResponseMessage response;
 
-			byte[] byteData = GetImageAsByteArray(file);
+			var byteData = GetImageAsByteArray(file);
 
 			using (var content = new ByteArrayContent(byteData))
 			{
@@ -95,37 +95,45 @@ namespace Pets_identifier
 				if (response.IsSuccessStatusCode)
 				{
 					var responseString = await response.Content.ReadAsStringAsync();
+					var responseModel = JsonConvert.DeserializeObject<EvaluationModel>(responseString);
+					var results = responseModel.Predictions.OrderByDescending(p => p.Probability);
+					var result1 = results.Take(1).Single();
+					var result2 = results.Skip(1).Take(1).Single();
 
-					EvaluationModel responseModel = JsonConvert.DeserializeObject<EvaluationModel>(responseString);
-
-					double max = responseModel.Predictions.Max(m => m.Probability);
-
-					if (max >= 0.5)
+					if (result1.Probability > 0.5)
 					{
-						var results = responseModel.Predictions.OrderByDescending(p => p.Probability);
-						var result1 = results.Take(1).Single().Tag;
-						var result2 = results.Skip(1).Take(1).Single().Tag;
 						string[] tempArray = { "Hamster", "Rabbit" };
-						if ((String.Equals(result1, "Small Pet") && Array.IndexOf(tempArray, result2) > -1) || (String.Equals(result2, "Small Pet") && Array.IndexOf(tempArray, result1) > -1))
+
+						if ((String.Equals(result2.Tag, "Small Pet") && Array.IndexOf(tempArray, result1.Tag) > -1) || 
+							(String.Equals(result1.Tag, "Small Pet") && Array.IndexOf(tempArray, result2.Tag) > -1 && result2.Probability > 0.5))
 						{
 							AzureManager.AzureManagerInstance.SetPet("Small Pet");
+							TagLabel.Text = (String.Equals(result1.Tag, "Small Pet")) ? result2.Tag + ": " : result1.Tag + ": ";
 							PetShopLink.Text = "http://www.animates.co.nz/small-pet";
 						}
+
+						else if (!String.Equals(result1.Tag, "Small Pet"))
+						{
+							AzureManager.AzureManagerInstance.SetPet(result1.Tag);
+							TagLabel.Text = result1.Tag + ": ";
+							PetShopLink.Text = "http://www.animates.co.nz/" + result1.Tag.ToLower();
+						}
+
 						else
 						{
-							string temp = (String.Equals(result1, "Small Pet")) ? result2 : result1;
-							AzureManager.AzureManagerInstance.SetPet(temp);
-							PetShopLink.Text = "http://www.animates.co.nz/" + temp.ToLower();
+							TagLabel.Text = "Not Pet";
+							PetShopLink.Text = "";
 						}
-						TagLabel.Text = (String.Equals(result1, "Small Pet")) ? result2 : result1;
-						TagLabel.Text += ": ";
-						PetShopLink.GestureRecognizers.Add(new TapGestureRecognizer
-						{
-							Command = new Command(() => {
-								Device.OpenUri(new Uri(PetShopLink.Text));
-							})
-						});
+
+						if (PetShopLink.Text != null && PetShopLink.Text != "")
+							PetShopLink.GestureRecognizers.Add(new TapGestureRecognizer
+							{
+								Command = new Command(() => {
+									Device.OpenUri(new Uri(PetShopLink.Text));
+								})
+							});
 					}
+
 					else
 					{
 						TagLabel.Text = "Not Pet";
