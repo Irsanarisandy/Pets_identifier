@@ -108,15 +108,16 @@ namespace Pets_identifier
 							(String.Equals(result1.Tag, "Small Pet") && Array.IndexOf(tempArray, result2.Tag) > -1 && result2.Probability > 0.5))
 						{
 							AzureManager.AzureManagerInstance.SetPet("Small Pet");
-							TagLabel.Text = (String.Equals(result1.Tag, "Small Pet")) ? result2.Tag + ": " : result1.Tag + ": ";
-							PetShopLink.Text = "http://www.animates.co.nz/small-pet";
+							String tempText = (String.Equals(result1.Tag, "Small Pet")) ? result2.Tag : result1.Tag;
+							TagLabel.Text = tempText + ": ";
+							PetShopLink.Text = "https://en.wikipedia.org/wiki/" + tempText;
 						}
 
 						else if (!String.Equals(result1.Tag, "Small Pet"))
 						{
 							AzureManager.AzureManagerInstance.SetPet(result1.Tag);
 							TagLabel.Text = result1.Tag + ": ";
-							PetShopLink.Text = "http://www.animates.co.nz/" + result1.Tag.ToLower();
+							PetShopLink.Text = "https://en.wikipedia.org/wiki/" + result1.Tag;
 						}
 
 						else
